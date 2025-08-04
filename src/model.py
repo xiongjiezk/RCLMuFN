@@ -67,8 +67,8 @@ class CrossAttention(nn.Module):
 class RCLMuFN(nn.Module):
     def __init__(self, args):
         super(RCLMuFN, self).__init__()
-        self.model = CLIPModel.from_pretrained("./MMSD2.0-main/openai/clip-vit-base-patch32")
-        self.config = BertConfig.from_pretrained("./MMSD2.0-main/bert-base-uncased")
+        self.model = CLIPModel.from_pretrained("/home/xiongjie/data/models/clip-vit-base-patch32")
+        self.config = BertConfig.from_pretrained("/home/xiongjie/data/models/bert-base-uncased")
         self.config.hidden_size = 768
         self.config.num_attention_heads = 8
         self.trans = MultimodalEncoder(self.config, layer_number=args.layers)
@@ -89,8 +89,8 @@ class RCLMuFN(nn.Module):
         self.classifier_fuse = nn.Linear(args.image_size , args.label_number)
         self.cross_att = CrossAttention(feature_dim=768, dropout_prob=0.1)
         self.loss_fct = nn.CrossEntropyLoss()
-        self.tokenizer = BertTokenizer.from_pretrained("./MMSD2.0-main/bert-base-uncased")
-        self.bert_model = BertModel.from_pretrained("./MMSD2.0-main/bert-base-uncased")
+        self.tokenizer = BertTokenizer.from_pretrained("/home/xiongjie/data/models/bert-base-uncased")
+        self.bert_model = BertModel.from_pretrained("/home/xiongjie/data/models/bert-base-uncased")
         self.backbone = build_backbone(args)
         self.d_model = 768
         self.nheads = 8

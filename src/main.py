@@ -91,7 +91,7 @@ def main():
 
     if args.model == 'RCLMuFN':
 
-        processor = CLIPProcessor.from_pretrained("./MMSD2.0-main/openai/clip-vit-base-patch32")
+        processor = CLIPProcessor.from_pretrained("/home/xiongjie/data/models/clip-vit-base-patch32")
         model = RCLMuFN(args)
     else:
         raise RuntimeError('Error model name!')

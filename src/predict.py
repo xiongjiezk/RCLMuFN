@@ -101,7 +101,7 @@ def main():
     os.environ["CUDA_VISIBLE_DEVICES"] = args.device
     device = torch.device("cuda" if torch.cuda.is_available() and int(args.device) >= 0 else "cpu")
 
-    processor = CLIPProcessor.from_pretrained("./MMSD2.0-main/openai/clip-vit-base-patch32")
+    processor = CLIPProcessor.from_pretrained("/home/xiongjie/data/models/clip-vit-base-patch32")
     model = RCLMuFN(args)
     test_data = MyDataset(mode='test', text_name=args.text_name, limit=None)
 
