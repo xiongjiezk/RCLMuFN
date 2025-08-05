@@ -155,35 +155,40 @@ class RCLMuFN(nn.Module):
         bert_text_features = self.txt(pooler_outputs)  # 64,768
 
         # SFIM
-        image_t = self.imtxt_cross(tgt=res_features, memory=bert_text_features)  # 32,768
-        text_im = self.imtxt_cross(tgt=bert_text_features, memory=res_features)  # 32,768
+        # image_t = self.imtxt_cross(tgt=res_features, memory=bert_text_features)  # 32,768
+        # text_im = self.imtxt_cross(tgt=bert_text_features, memory=res_features)  # 32,768
+
+        image_t = self.imtxt_cross(tgt=res_features.unsqueeze(1), memory=last_hidden_states).squeeze(1) # 32,768
+        text_im = self.imtxt_cross(tgt=bert_text_features.unsqueeze(1), memory=src.reshape(src.size(0), -1, src.size(1))).squeeze(1)  # 32,768
 
         # RCLM
-        text_feature2 = self.txt2(torch.cat([text_feature, text_im], dim=-1))  # 32,768
-        text_feature2 = text_feature2.unsqueeze(1)  # 32,1,768
-        txt_cat = self.text_self(torch.stack([text_feature, text_im], dim=1))  # 32,2,768
-        txt_output = self.text_cross(tgt=text_feature2, memory=txt_cat)  # 32,1,768
-        txt_output = txt_output.squeeze(1)  # 32,768
-
-        image_feature2 = self.vis2(torch.cat([image_feature, image_t],dim=-1))  # 32,768
-        image_feature2 = image_feature2.unsqueeze(1)  # 32,1,768
-        image_cat = self.vis_self(torch.stack([image_feature, image_t], dim=1))  # 32,2,768
-        image_output = self.vis_cross(tgt=image_feature2, memory=image_cat)  # 32,1,768
-        image_output = image_output.squeeze(1)  # 32,768
-
-        txt_out = self.cross_att(txt_output, image_output, image_output)  # 32,768
-        image_out = self.cross_att(image_output, txt_output, txt_output)  # 32,768
-        res_bert = 0.6 * image_out + 0.4 * txt_out  # 32,768
-        # res_bert = image_t + text_im
+        # text_feature2 = self.txt2(torch.cat([text_feature, text_im], dim=-1))  # 32,768
+        # text_feature2 = text_feature2.unsqueeze(1)  # 32,1,768
+        # txt_cat = self.text_self(torch.stack([text_feature, text_im], dim=1))  # 32,2,768
+        # txt_output = self.text_cross(tgt=text_feature2, memory=txt_cat)  # 32,1,768
+        # txt_output = txt_output.squeeze(1)  # 32,768
+        #
+        # image_feature2 = self.vis2(torch.cat([image_feature, image_t],dim=-1))  # 32,768
+        # image_feature2 = image_feature2.unsqueeze(1)  # 32,1,768
+        # image_cat = self.vis_self(torch.stack([image_feature, image_t], dim=1))  # 32,2,768
+        # image_output = self.vis_cross(tgt=image_feature2, memory=image_cat)  # 32,1,768
+        # image_output = image_output.squeeze(1)  # 32,768
+        #
+        # txt_out = self.cross_att(txt_output, image_output, image_output)  # 32,768
+        # image_out = self.cross_att(image_output, txt_output, txt_output)  # 32,768
+        # res_bert = 0.6 * image_out + 0.4 * txt_out  # 32,768
+        res_bert = image_t + text_im
 
         # CLIP-View Feature Fusion
-        cross_feature_text = self.cross_att(text_feature, image_feature, image_feature)  # 32,768
-        cross_feature_image = self.cross_att(image_feature, text_feature, text_feature)  # 32,768
-        fuse_feature = 0.7 * cross_feature_text + 0.3 * cross_feature_image
+        # cross_feature_text = self.cross_att(text_feature, image_feature, image_feature)  # 32,768
+        # cross_feature_image = self.cross_att(image_feature, text_feature, text_feature)  # 32,768
+        # fuse_feature = 0.7 * cross_feature_text + 0.3 * cross_feature_image
+        fuse_feature = text_feature + image_feature
 
         # MuFFM
-        att = self.attetion_block(torch.cat([fuse_feature, res_bert], dim=-1))  # 32,768
-        output = 0.5 * fuse_feature + 0.5 * (att * self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1)))  # 32,768
+        # att = self.attetion_block(torch.cat([fuse_feature, res_bert], dim=-1))  # 32,768
+        # output = 0.5 * fuse_feature + 0.5 * (att * self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1)))  # 32,768
+        output = fuse_feature
 
         # Predict
         logits_fuse = self.classifier_fuse(output)  # 64,2  output
