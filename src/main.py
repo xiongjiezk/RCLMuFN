@@ -1,7 +1,7 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-from model import RCLMuFN
-from train import train
+from model_v2 import RCLMuFN
+from train_v2 import train
 from data_set import MyDataset
 import torch
 import argparse

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+[Pp]ycache/
+.python-version
+.env
+.venv
+venv/
+env/
+# Virtual Environment
+.venv/
+# IDEs
+.idea/
+*.swp
+*.swo
+# Build
+dist/
+build/
+*.egg-info/
+# Logs
+*.log
