@@ -1,4 +1,5 @@
 # MMSD2.0
+set -x
 timestamp=$(date +"%Y%m%d_%H%M%S")
 logfile="logs/train_${timestamp}.log"
 python3 main.py --model RCLMuFN --text_name text_json_final --weight_decay 0.05 --train_batch_size 32 --dev_batch_size 32 --learning_rate 5e-4 --clip_learning_rate 1e-6 --num_train_epochs 20 --layers 3 --max_grad_norm 5 --dropout_rate 0.1 --optimizer_name adam --text_size 512 --image_size 768 --warmup_proportion 0.2 --device 0 > $logfile 2>&1 &
