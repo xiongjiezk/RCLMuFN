@@ -21,6 +21,8 @@ def train(args, model,device, train_data, dev_data, test_data, processor):
     train_loader = DataLoader(dataset=train_data,
                               batch_size=args.train_batch_size,
                               collate_fn=MyDataset.collate_func,
+                              num_workers=16,
+                              prefetch_factor=16,
                               shuffle=True)
     total_steps = int(len(train_loader) * args.num_train_epochs)
     model.to(device)

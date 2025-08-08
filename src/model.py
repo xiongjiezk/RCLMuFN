@@ -180,10 +180,10 @@ class RCLMuFN(nn.Module):
         # res_bert = image_t + text_im
 
         # CLIP-View Feature Fusion
-        # cross_feature_text = self.cross_att(text_feature, image_feature, image_feature)  # 32,768
-        # cross_feature_image = self.cross_att(image_feature, text_feature, text_feature)  # 32,768
-        # fuse_feature = 0.7 * cross_feature_text + 0.3 * cross_feature_image
-        fuse_feature = text_feature + image_feature
+        cross_feature_text = self.cross_att(text_feature, image_feature, image_feature)  # 32,768
+        cross_feature_image = self.cross_att(image_feature, text_feature, text_feature)  # 32,768
+        fuse_feature = 0.7 * cross_feature_text + 0.3 * cross_feature_image
+        # fuse_feature = text_feature + image_feature
 
         # MuFFM
         # att = self.attetion_block(torch.cat([fuse_feature, res_bert], dim=-1))  # 32,768
