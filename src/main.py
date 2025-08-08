@@ -70,7 +70,7 @@ def main():
     args = set_args()
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 
-    device = torch.device("cuda" if torch.cuda.is_available() and int(args.device) >= 0 else "cpu")
+    device = torch.device(f"cuda:{args.device}" if torch.cuda.is_available() and int(args.device) >= 0 else "cpu")
 
     seed_everything(args.seed)
 

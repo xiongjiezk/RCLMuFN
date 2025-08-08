@@ -155,11 +155,11 @@ class RCLMuFN(nn.Module):
         bert_text_features = self.txt(pooler_outputs)  # 64,768
 
         # SFIM
-        # image_t = self.imtxt_cross(tgt=res_features, memory=bert_text_features)  # 32,768
-        # text_im = self.imtxt_cross(tgt=bert_text_features, memory=res_features)  # 32,768
+        image_t = self.imtxt_cross(tgt=res_features, memory=bert_text_features)  # 32,768
+        text_im = self.imtxt_cross(tgt=bert_text_features, memory=res_features)  # 32,768
 
-        image_t = self.imtxt_cross(tgt=res_features.unsqueeze(1), memory=last_hidden_states).squeeze(1) # 32,768
-        text_im = self.imtxt_cross(tgt=bert_text_features.unsqueeze(1), memory=src.reshape(src.size(0), -1, src.size(1))).squeeze(1)  # 32,768
+        # image_t = self.imtxt_cross(tgt=res_features.unsqueeze(1), memory=last_hidden_states).squeeze(1) # 32,768
+        # text_im = self.imtxt_cross(tgt=bert_text_features.unsqueeze(1), memory=src.reshape(src.size(0), -1, src.size(1))).squeeze(1)  # 32,768
 
         # RCLM
         text_feature2 = self.txt2(torch.cat([text_feature, text_im], dim=-1))  # 32,768
@@ -186,9 +186,9 @@ class RCLMuFN(nn.Module):
         # fuse_feature = text_feature + image_feature
 
         # MuFFM
-        # att = self.attetion_block(torch.cat([fuse_feature, res_bert], dim=-1))  # 32,768
-        # output = 0.5 * fuse_feature + 0.5 * (att * self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1)))  # 32,768
-        output = self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1))
+        att = self.attetion_block(torch.cat([fuse_feature, res_bert], dim=-1))  # 32,768
+        output = 0.5 * fuse_feature + 0.5 * (att * self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1)))  # 32,768
+        # output = self.mlp_layer(torch.cat([fuse_feature, res_bert], dim=-1))
 
         # Predict
         logits_fuse = self.classifier_fuse(output)  # 64,2  output
